@@ -1,0 +1,192 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+    <title>Draw Text Example</title>
+    <style>
+      canvas {
+        display: block;
+        background: rgba( 0, 0, 0, 0.1 );
+        margin-bottom: 1rem;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- <canvas width="800" height="600"></canvas> -->
+    <script defer src="bounds.js"></script>
+    <script defer>
+      // const measureText = (
+      //   text, fontStyle
+      // ) => {
+      //   const span = document.createElement( 'span' )
+
+      //   span.style.font = fontStyle
+      //   span.innerText = text
+
+      //   document.body.appendChild( span )
+
+      //   const { width, height } = span.getBoundingClientRect()
+
+      //   span.remove()
+
+      //   return { width, height }
+      // }
+
+      // const isEmptyRow = ( imageData, y ) => {
+      //   const { width, height, data } = imageData
+
+      //   for( let x = 0; x < width; x++ ){
+      //     const index = ( y * width + x ) * 4
+      //     const alpha = data[ index + 3 ]
+
+      //     if( alpha !== 0 ) return false
+      //   }
+
+      //   return true
+      // }
+
+      // const verticalBounds = imageData => {
+      //   const { width, height, data } = imageData
+
+      //   let top = 0
+      //   let bottom = 0
+      //   let foundTop = false
+
+      //   for( let y = 0; y < height; y++ ){
+      //     if( !foundTop ){
+      //       if( !isEmptyRow( imageData, y ) ){
+      //         foundTop = true
+      //         top = y
+      //       }
+      //     }
+
+      //     if( !isEmptyRow( imageData, y ) ){
+      //       bottom = y
+      //     }
+      //   }
+
+      //   return { top, bottom }
+      // }
+
+      // const textCanvas = (
+      //   text, fontStyle, color, flushTop = false, flushBottom = false
+      // ) => {
+      //   const size = measureText( text, fontStyle )
+      //   const canvas = document.createElement( 'canvas' )
+      //   const context = canvas.getContext( '2d' )
+
+      //   canvas.width = size.width
+      //   canvas.height = size.height
+
+      //   context.font = fontStyle
+      //   context.fillStyle = color
+      //   context.textBaseline = 'bottom'
+
+      //   context.fillText( text, 0, size.height )
+
+      //   if( flushTop || flushBottom ){
+      //     const imageData = context.getImageData( 0, 0, size.width, size.height )
+      //     const { top, bottom } = verticalBounds( imageData )
+
+      //     let height = size.height
+      //     let y = 0
+
+      //     if( flushTop ){
+      //       height -= top
+      //       y -= top
+      //     }
+
+      //     if( flushBottom ){
+      //       height -= ( size.height - bottom ) - 1
+      //     }
+
+      //     canvas.height = height
+
+      //     context.putImageData( imageData, 0, y )
+      //   }
+
+      //   return canvas
+      // }
+
+      // const noFlush = textCanvas(
+      //   'Hello!',
+      //   '32px sans-serif',
+      //   '#000'
+      // )
+
+      // document.body.appendChild( noFlush )
+
+      // const flushTop = textCanvas(
+      //   'Hello!',
+      //   '32px sans-serif',
+      //   '#000',
+      //   true
+      // )
+
+      // document.body.appendChild( flushTop )
+
+      // const flushBottom = textCanvas(
+      //   'Hello!',
+      //   '32px sans-serif',
+      //   '#000',
+      //   false,
+      //   true
+      // )
+
+      // document.body.appendChild( flushBottom )
+
+      // const flush = textCanvas(
+      //   'Hello!',
+      //   '32px sans-serif',
+      //   '#000',
+      //   true,
+      //   true
+      // )
+
+      // document.body.appendChild( flush )
+
+      // const canvas = document.querySelector( 'canvas' )
+      // const context = canvas.getContext( '2d' )
+
+      // context.font = '32px sans-serif'
+      // context.textBaseline = 'bottom'
+      // context.fillStyle = '#000'
+      // context.strokeStyle = 'rgba( 255, 0, 0, 0.1 )'
+
+      // const startRange = 0x21
+      // const endRange = 0x7e
+
+      // for( let i = 0; i <= endRange; i++ ){
+      //   const c = String.fromCodePoint( i )
+      //   const size = measureText( c, context.font )
+
+      //   console.log( size.height )
+
+      //   context.fillText( c, 32, 64 )
+      //   context.strokeRect( 32, 64 - size.height, size.width, size.height )
+      // }
+
+      // // const text = 'The quick brown fox jumps over the lazy dog'
+
+      // // context.fillText( text, 32, 64 )
+
+      // // const canvasWidth = context.measureText( text ).width
+
+      // // const span = document.createElement( 'span' )
+
+      // // span.style.font = context.font
+
+      // // span.innerText = text
+
+      // // document.body.appendChild( span )
+
+      // // const spanWidth = span.getBoundingClientRect().width
+
+      // // span.remove()
+
+      // // console.log( { canvasWidth, spanWidth } )
+
+    </script>
+  </body>
+</html>

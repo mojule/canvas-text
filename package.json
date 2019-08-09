@@ -1,0 +1,28 @@
+{
+  "name": "canvas-text",
+  "version": "0.0.1",
+  "description": "Draw text to HTML Canvas with wrapping, fitting etc",
+  "directories": {
+    "example": "examples"
+  },
+  "main": "./dist/index.js",
+  "typings": "./dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "examples": "npm run build && browserify ./dist/examples/fit.js -o ./examples/bounds.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mojule/canvas-text.git"
+  },
+  "keywords": [],
+  "author": "Nik Coughlin <nrkn.com@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/mojule/canvas-text/issues"
+  },
+  "homepage": "https://github.com/mojule/canvas-text#readme",
+  "dependencies": {
+    "@mojule/wrap-text": "^0.1.0"
+  }
+}
