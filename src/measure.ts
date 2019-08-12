@@ -1,4 +1,4 @@
-import { Size } from './types'
+import { Size, TextBlockSizes } from './types'
 
 export const measureText = (
   text: string, fontStyle: string
@@ -6,7 +6,7 @@ export const measureText = (
   const span = document.createElement( 'span' )
 
   span.style.font = fontStyle
-  span.innerText = text
+  span.innerHTML = text.replace( /\s/g, '&nbsp;' )
 
   document.body.appendChild( span )
 
@@ -19,16 +19,25 @@ export const measureText = (
 
 export const measureLines = (
   lines: string[], fontStyle: string
-): Size => {
+): TextBlockSizes => {
   let width = 0
   let height = 0
 
-  lines.forEach( line => {
-    const { width: w, height: h } = measureText( line, fontStyle )
+  const blockBounds: TextBlockSizes = {
+    lineSizes: [],
+    size: { width, height }
+  }
 
+  lines.forEach( line => {
+    const lineBounds = measureText( line, fontStyle )
+    const { width: w, height: h } = lineBounds
+
+    blockBounds.lineSizes.push( lineBounds )
     width = Math.max( width, w )
     height += h
   } )
 
-  return { width, height }
+  blockBounds.size = { width, height }
+
+  return blockBounds
 }

@@ -1,7 +1,5 @@
-import { Rect } from '../types'
-import { fitText } from '../fit';
-import { measureText } from '../measure';
-import { getFontStyle } from '../util';
+import { Rect, TextBlock, Font } from '../types'
+import { fitText } from '../fit'
 
 const source = document.createElement( 'canvas' )
 const context = source.getContext( '2d' )!
@@ -9,7 +7,7 @@ const context = source.getContext( '2d' )!
 source.width = 640
 source.height = 480
 
-const text = 'The quick brown fox jumps over the lazy dog'
+const lines = [ 'The quick brown fox jumps over the lazy dog' ]
 
 const bounds: Rect = {
   x: 32,
@@ -18,30 +16,40 @@ const bounds: Rect = {
   height: 200
 }
 
-const fontName = 'sans-serif'
-const fontSize = 24
+const align = 'left'
+const valign = 'top'
+const lineHeightScale = 0.8
+const flush = true
 
-const fitResult = fitText( text, bounds, fontName, fontSize, 1, { minSize: 8 } )
+const fit = {
+  minSize: 8
+}
 
-const { lines, size } = fitResult
+const font: Font = {
+  name: 'sans-serif',
+  size: 24,
+  color: '#000'
+}
 
-const fontStyle = getFontStyle( size, fontName )
+const textBlock: TextBlock = {
+  lines,
+  bounds,
+  align,
+  valign,
+  lineHeightScale,
+  font,
+  flush,
+  fit
+}
 
-let y = bounds.y
+const fitResult = fitText( textBlock )
 
-context.fillStyle = '#000'
-context.textBaseline = 'bottom'
-context.font = fontStyle
+const { canvas, yOffset } = fitResult
 
 context.strokeStyle = 'rgba( 255, 0, 0, 0.5 )'
 
 context.strokeRect( bounds.x, bounds.y, bounds.width, bounds.height )
-
-lines.forEach( line => {
-  const { height } = measureText( line, fontStyle )
-  y += height
-
-  context.fillText( line, bounds.x, y )
-} )
+context.drawImage( canvas, bounds.x, bounds.y + yOffset )
 
 document.body.appendChild( source )
+document.body.appendChild( canvas )

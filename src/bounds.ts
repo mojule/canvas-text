@@ -13,8 +13,8 @@ export const imageBounds = ( imageData: ImageData ): Rect => {
     const { left: rowLeft, right: rowRight } = horizontalBounds( imageData, py )
     const nonEmpty = rowLeft > 0 && rowRight > 0
 
-    if( nonEmpty ){
-      if( !foundLeft ){
+    if ( nonEmpty ) {
+      if ( !foundLeft ) {
         x = rowLeft
         foundLeft = true
       }
@@ -22,7 +22,7 @@ export const imageBounds = ( imageData: ImageData ): Rect => {
       x = Math.min( x, rowLeft )
       right = Math.max( right, rowRight )
 
-      if( !foundTop ){
+      if ( !foundTop ) {
         foundTop = true
         y = py
       }

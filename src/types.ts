@@ -17,7 +17,7 @@ export interface Font {
 }
 
 export interface TextBlock {
-  text: string
+  lines: string[]
   bounds: Rect
   align: 'left' | 'center' | 'right'
   valign: 'top' | 'middle' | 'bottom'
@@ -27,13 +27,20 @@ export interface TextBlock {
   fit?: FitSettings
 }
 
+export interface TextBlockSizes {
+  lineSizes: Size[]
+  size: Size
+}
+
 export interface FitSettings {
   minSize: number
 }
 
 export interface FitResult {
+  canvas: HTMLCanvasElement
   lines: string[]
   size: number
+  yOffset: number
   oversize?: boolean
 }
 

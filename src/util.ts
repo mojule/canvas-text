@@ -11,3 +11,5 @@ export const scaleSize = (
   { width: scaleW, height: scaleH }: Size
 ): Size =>
   ( { width: width * scaleW, height: height * scaleH } )
+
+export const getArea = ({ width, height }: Size ) => width * height

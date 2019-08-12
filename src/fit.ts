@@ -1,14 +1,22 @@
-import { FitSettings, Rect, FitResult } from './types'
+import { FitSettings, Rect, FitResult, TextBlock, Font } from './types'
 import { wrap } from '@mojule/wrap-text'
 import { measureText, measureLines } from './measure'
 import { getFontStyle, isOversize, scaleSize } from './util'
+import { textToCanvas } from './text-to-canvas'
+import { imageBounds } from './bounds';
 
 export const fitText = (
-  text: string, bounds: Rect,
-  name: string, size: number,
-  lineHeightScale = 1, fit?: FitSettings,
-  scaleStep = 0.95
+  textBlock: TextBlock,
+  scaleStep = 0.975
 ): FitResult => {
+  const {
+    lines, font, fit, bounds, flush, lineHeightScale, valign
+  } = textBlock
+
+  const { name, size, color } = font
+  const text = lines.join( '\n' )
+  const lineSizeScale = { width: 1, height: lineHeightScale }
+
   const tryFit = ( size: number ) => {
     size = (
       fit && fit.minSize ?
@@ -16,30 +24,66 @@ export const fitText = (
         size
     )
 
+    let yOffset = 0
+
     const fontStyle = getFontStyle( size, name )
 
     const measureWidth = ( text: string ) =>
       measureText( text, fontStyle ).width
 
     const lines = wrap( text, bounds.width, measureWidth )
+    const { size: blockSizeUnscaled } = measureLines( lines, fontStyle )
+    const blockSize = scaleSize( blockSizeUnscaled, lineSizeScale )
 
-    const blockSize = scaleSize(
-      measureLines( lines, fontStyle ),
-      { width: 1, height: lineHeightScale }
+    const scaledFont: Font = { name, size, color }
+
+    const scaledTextBlock = Object.assign(
+      {},
+      textBlock,
+      {
+        lines,
+        font: scaledFont
+      }
     )
+
+    let canvas: HTMLCanvasElement | null = null
+
+    if( flush && valign === 'top' ){
+      canvas = textToCanvas( scaledTextBlock )
+
+      const context = canvas.getContext( '2d' )!
+      const imageData = context.getImageData(
+        0, 0, canvas.width, canvas.height
+      )
+
+      const bounds = imageBounds( imageData )
+
+      blockSize.height = bounds.height
+      yOffset = -bounds.y
+    }
 
     const oversize = isOversize( bounds, blockSize )
 
-    const fitResult = { lines, size, oversize }
+    const nextSize = size * scaleStep
 
-    if( !oversize ) return fitResult
+    const isTryFit = (
+      oversize && fit !== undefined && nextSize > fit.minSize
+    )
 
-    if( fit === undefined ) return fitResult
+    if( !isTryFit ){
+      if( canvas === null ){
+        canvas = textToCanvas( scaledTextBlock )
+      }
 
-    if( size * scaleStep < fit.minSize ) return fitResult
+      const fitResult: FitResult = { canvas, lines, size, yOffset, oversize }
 
-    return tryFit( size * scaleStep )
+      return fitResult
+    }
+
+    return tryFit( nextSize )
   }
 
-  return tryFit( size )
+  const fitResult = tryFit( size )
+
+  return fitResult
 }

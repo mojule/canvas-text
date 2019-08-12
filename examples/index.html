@@ -10,28 +10,36 @@
         background: rgba( 0, 0, 0, 0.1 );
         margin-bottom: 1rem;
       }
+
+      span {
+        outline: 1px solid #39f;
+      }
     </style>
   </head>
   <body>
     <!-- <canvas width="800" height="600"></canvas> -->
     <script defer src="bounds.js"></script>
     <script defer>
-      // const measureText = (
-      //   text, fontStyle
-      // ) => {
-      //   const span = document.createElement( 'span' )
 
-      //   span.style.font = fontStyle
-      //   span.innerText = text
+      const measureText = (
+        text, fontStyle
+      ) => {
+        const span = document.createElement( 'span' )
 
-      //   document.body.appendChild( span )
+        span.style.font = fontStyle
+        span.innerHTML = text.replace( /\s/g, '&nbsp;' )
 
-      //   const { width, height } = span.getBoundingClientRect()
+        document.body.appendChild( span )
 
-      //   span.remove()
+        const { width, height } = span.getBoundingClientRect()
 
-      //   return { width, height }
-      // }
+        //span.remove()
+
+        return { width, height }
+      }
+
+      console.log( measureText( 'The', '16px sans-serif' ) )
+      console.log( measureText( 'The ', '16px sans-serif' ) )
 
       // const isEmptyRow = ( imageData, y ) => {
       //   const { width, height, data } = imageData
