@@ -1,14 +1,16 @@
 import { TextBlock } from './types'
 import { getFontStyle, scaleSize } from './util'
 import { measureLines, measureText } from './measure'
+import { imageBounds } from './bounds'
 
 export const textToCanvas = (
   textBlock: TextBlock
 ) => {
   const {
-    lines, bounds, lineHeightScale, font, align, valign
+    text, lineHeightScale, font, align, flush
   } = textBlock
 
+  const lines = text.split( '\n' )
   const { name, size, color } = font
   const fontStyle = getFontStyle( size, name )
   const canvas = document.createElement( 'canvas' )
@@ -26,8 +28,8 @@ export const textToCanvas = (
     s => scaleSize( s, lineSizeScale )
   )
 
-  canvas.width = bounds.width
-  canvas.height = bounds.height
+  canvas.width = blockSize.width
+  canvas.height = blockSize.height
 
   const [ head ] = lines
 
@@ -37,23 +39,13 @@ export const textToCanvas = (
   const scaledLineHeight = unscaledLineHeight * lineHeightScale
   const delta = scaledLineHeight - unscaledLineHeight
 
-  let y = delta !== 0 ? delta / 2 : 0
+  let y = delta !== 0 ? delta : 0
 
   canvas.height = blockSize.height
 
   if( y < 0 ){
     canvas.height -= y
     y = 0
-  }
-
-  if( valign === 'middle' ){
-    const yOffset = ( bounds.height - blockSize.height ) / 2
-
-    y += yOffset
-  } else if( valign === 'bottom' ){
-    const yOffset = ( bounds.height - blockSize.height ) / 2
-
-    y += yOffset
   }
 
   context.fillStyle = color
@@ -65,15 +57,25 @@ export const textToCanvas = (
     let x = 0
 
     if( align === 'center' ){
-      x = ( bounds.width - width ) / 2
+      x = ( canvas.width - width ) / 2
     } else if( align === 'right' ){
-      x = bounds.width - width
+      x = canvas.width - width
     }
 
     context.fillText( line, x, y )
 
     y += scaledLineHeight
   } )
+
+  if( flush ){
+    const imageData = context.getImageData( 0, 0, canvas.width, canvas.height )
+    const { x, y, width, height } = imageBounds( imageData )
+
+    canvas.width = width
+    canvas.height = height
+
+    context.putImageData( imageData, -x, -y )
+  }
 
   return canvas
 }

@@ -14,14 +14,11 @@ export interface Font {
     color: string;
 }
 export interface TextBlock {
-    lines: string[];
-    bounds: Rect;
+    text: string;
     align: 'left' | 'center' | 'right';
-    valign: 'top' | 'middle' | 'bottom';
     lineHeightScale: number;
     font: Font;
     flush?: boolean;
-    fit?: FitSettings;
 }
 export interface TextBlockSizes {
     lineSizes: Size[];
