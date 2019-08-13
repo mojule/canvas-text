@@ -9,3 +9,8 @@ Draw text to HTML Canvas with wrapping, fitting etc
 - align text horizontally and vertically within defined boundaries
 - optionally draw text flush to boundaries
 
+## Roadmap
+
+- kerning
+- use binary search for auto fitting instead of step size
+- rotation?
