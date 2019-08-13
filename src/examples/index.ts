@@ -119,7 +119,7 @@ const addExample = (
   textBlock.font = Object.assign( textBlock.font, fontOptions )
 
   const options = Object.assign(
-    createOptions( 8, 200, fitMode, step, autoWrap ),
+    createOptions( 8, 300, fitMode, step, autoWrap ),
     fitOptions
   )
 

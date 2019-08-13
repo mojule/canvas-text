@@ -69,7 +69,7 @@ const addExample = (example, textBlockOptions = {}, fitOptions = {}, fontOptions
     const { name, text, fontSize, fitMode, step, autoWrap } = example;
     const textBlock = Object.assign(createTextBlock(text, fontSize), textBlockOptions);
     textBlock.font = Object.assign(textBlock.font, fontOptions);
-    const options = Object.assign(createOptions(8, 200, fitMode, step, autoWrap), fitOptions);
+    const options = Object.assign(createOptions(8, 300, fitMode, step, autoWrap), fitOptions);
     addFittedCanvas(name, textBlock, options);
 };
 const examples = [];
