@@ -1,70 +1,56 @@
 import { TextBlock } from './types'
-import { getFontStyle, scaleSize } from './util'
-import { measureLines, measureText } from './measure'
+import { getFontStyle } from './util'
+import { measureLines } from './measure'
 import { imageBounds } from './bounds'
 
 export const textToCanvas = (
   textBlock: TextBlock
 ) => {
   const {
-    text, lineHeightScale, font, align, flush
+    text, font,
+    align = 'left',
+    flush = false
   } = textBlock
 
   const lines = text.split( '\n' )
-  const { name, size, color } = font
-  const fontStyle = getFontStyle( size, name )
+  const { color } = font
+  const fontStyle = getFontStyle( font )
   const canvas = document.createElement( 'canvas' )
   const context = canvas.getContext( '2d' )!
-  const lineSizeScale = { width: 1, height: lineHeightScale }
 
   const {
-    size: blockSizeUnscaled,
-    lineSizes: lineSizesUnscaled
-  } = measureLines( lines, fontStyle )
+    size: blockSize,
+    lineRects
+  } = measureLines( lines, font )
 
-  const blockSize = scaleSize( blockSizeUnscaled, lineSizeScale )
-
-  const lineSizes = lineSizesUnscaled.map(
-    s => scaleSize( s, lineSizeScale )
-  )
-
-  canvas.width = blockSize.width
-  canvas.height = blockSize.height
+  canvas.width = Math.max( 1, blockSize.width )
+  canvas.height = Math.max( 1, blockSize.height )
 
   const [ head ] = lines
 
   if( typeof head !== 'string' ) return canvas
 
-  const unscaledLineHeight = measureText( head, fontStyle ).height
-  const scaledLineHeight = unscaledLineHeight * lineHeightScale
-  const delta = scaledLineHeight - unscaledLineHeight
-
-  let y = delta !== 0 ? delta : 0
-
   canvas.height = blockSize.height
-
-  if( y < 0 ){
-    canvas.height -= y
-    y = 0
-  }
 
   context.fillStyle = color
   context.font = fontStyle
   context.textBaseline = 'top'
 
+  let y = 0
+
   lines.forEach( ( line, i ) => {
-    const { width } = lineSizes[ i ]
-    let x = 0
+    const { x: xOff, width, height } = lineRects[ i ]
+    let x = -xOff
 
     if( align === 'center' ){
-      x = ( canvas.width - width ) / 2
+      x = ( canvas.width - width + ( x * 2 ) ) / 2
     } else if( align === 'right' ){
-      x = canvas.width - width
+      x = canvas.width - width + ( x * 2 )
     }
 
     context.fillText( line, x, y )
 
-    y += scaledLineHeight
+    y += height
   } )
 
   if( flush ){
@@ -79,3 +65,4 @@ export const textToCanvas = (
 
   return canvas
 }
+

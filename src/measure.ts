@@ -1,40 +1,72 @@
-import { Size, TextBlockSizes } from './types'
+import { TextBlockMetrics, Font, Rect } from './types'
+import { getFontStyle } from './util'
 
-export const measureText = (
-  text: string, fontStyle: string
-): Size => {
-  const span = document.createElement( 'span' )
+const svgNameSpace = 'http://www.w3.org/2000/svg'
+const svgEl = document.createElementNS( svgNameSpace, 'svg' )
+const textEl = document.createElementNS( svgNameSpace, 'text' )
 
-  span.style.font = fontStyle
-  span.innerHTML = text.replace( /\s/g, '&nbsp;' )
+svgEl.appendChild( textEl )
 
-  document.body.appendChild( span )
+/*
+  We use SVG to measure the width as it takes into account parts of the text
+  that would otherwise escape the bounding box, for example italics
+*/
+export const measureWidth = (
+  text: string, font: Font
+) => {
+  textEl.style.font = getFontStyle( font )
+  textEl.textContent = text.replace( /\s+/g, '\u00a0' )
 
-  const { width, height } = span.getBoundingClientRect()
+  document.body.appendChild( svgEl )
 
-  span.remove()
+  const rect = textEl.getBBox()
 
-  return { width, height }
+  svgEl.remove()
+
+  return rect as Rect
 }
 
 export const measureLines = (
-  lines: string[], fontStyle: string
-): TextBlockSizes => {
+  lines: string[], font: Font,
+  measurer = measureWidth
+): TextBlockMetrics => {
+  const { lineHeight = 1.2, size } = font
+  const scaledLineHeight = lineHeight * size
+
   let width = 0
   let height = 0
 
-  const blockBounds: TextBlockSizes = {
-    lineSizes: [],
+  const blockBounds: TextBlockMetrics = {
+    lineRects: [],
     size: { width, height }
   }
 
-  lines.forEach( line => {
-    const lineBounds = measureText( line, fontStyle )
-    const { width: w, height: h } = lineBounds
+  lines.forEach( ( line, i ) => {
+    const {
+      x, y,
+      width: measuredWidth,
+      height: measuredHeight
+    } = measurer( line, font )
 
-    blockBounds.lineSizes.push( lineBounds )
-    width = Math.max( width, w )
-    height += h
+    const isLastLine = i === lines.length - 1
+
+    // the last line should be full height
+    const currentHeight = (
+      isLastLine ?
+      measuredHeight :
+      scaledLineHeight
+    )
+
+    const lineRect = {
+      x, y,
+      width: measuredWidth,
+      height: currentHeight
+    }
+
+    blockBounds.lineRects.push( lineRect )
+
+    width = Math.max( width, measuredWidth )
+    height += currentHeight
   } )
 
   blockBounds.size = { width, height }

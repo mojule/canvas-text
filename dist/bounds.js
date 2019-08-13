@@ -9,7 +9,7 @@ exports.imageBounds = (imageData) => {
     let foundTop = false;
     for (let py = 0; py < imageData.height; py++) {
         const { left: rowLeft, right: rowRight } = horizontalBounds(imageData, py);
-        const nonEmpty = rowLeft > 0 && rowRight > 0;
+        const nonEmpty = rowRight > -1;
         if (nonEmpty) {
             if (!foundLeft) {
                 x = rowLeft;
@@ -31,8 +31,8 @@ exports.imageBounds = (imageData) => {
 const horizontalBounds = (imageData, y) => {
     y = y | 0;
     const { width, data } = imageData;
-    let left = 0;
-    let right = 0;
+    let left = -1;
+    let right = -1;
     let foundLeft = false;
     for (let x = 0; x < width; x++) {
         const index = (y * width + x) * 4;

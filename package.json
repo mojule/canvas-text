@@ -9,7 +9,7 @@
   "typings": "./dist/index.d.ts",
   "scripts": {
     "build": "tsc",
-    "examples": "npm run build && browserify ./dist/examples/fit.js -o ./examples/bounds.js"
+    "examples": "npm run build && browserify ./dist/examples/index.js -o ./examples/examples.js"
   },
   "repository": {
     "type": "git",

@@ -1,27 +1,46 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.measureText = (text, fontStyle) => {
-    const span = document.createElement('span');
-    span.style.font = fontStyle;
-    span.innerHTML = text.replace(/\s/g, '&nbsp;');
-    document.body.appendChild(span);
-    const { width, height } = span.getBoundingClientRect();
-    span.remove();
-    return { width, height };
+const util_1 = require("./util");
+const svgNameSpace = 'http://www.w3.org/2000/svg';
+const svgEl = document.createElementNS(svgNameSpace, 'svg');
+const textEl = document.createElementNS(svgNameSpace, 'text');
+svgEl.appendChild(textEl);
+/*
+  We use SVG to measure the width as it takes into account parts of the text
+  that would otherwise escape the bounding box, for example italics
+*/
+exports.measureWidth = (text, font) => {
+    textEl.style.font = util_1.getFontStyle(font);
+    textEl.textContent = text.replace(/\s+/g, '\u00a0');
+    document.body.appendChild(svgEl);
+    const rect = textEl.getBBox();
+    svgEl.remove();
+    return rect;
 };
-exports.measureLines = (lines, fontStyle) => {
+exports.measureLines = (lines, font, measurer = exports.measureWidth) => {
+    const { lineHeight = 1.2, size } = font;
+    const scaledLineHeight = lineHeight * size;
     let width = 0;
     let height = 0;
     const blockBounds = {
-        lineSizes: [],
+        lineRects: [],
         size: { width, height }
     };
-    lines.forEach(line => {
-        const lineBounds = exports.measureText(line, fontStyle);
-        const { width: w, height: h } = lineBounds;
-        blockBounds.lineSizes.push(lineBounds);
-        width = Math.max(width, w);
-        height += h;
+    lines.forEach((line, i) => {
+        const { x, y, width: measuredWidth, height: measuredHeight } = measurer(line, font);
+        const isLastLine = i === lines.length - 1;
+        // the last line should be full height
+        const currentHeight = (isLastLine ?
+            measuredHeight :
+            scaledLineHeight);
+        const lineRect = {
+            x, y,
+            width: measuredWidth,
+            height: currentHeight
+        };
+        blockBounds.lineRects.push(lineRect);
+        width = Math.max(width, measuredWidth);
+        height += currentHeight;
     });
     blockBounds.size = { width, height };
     return blockBounds;

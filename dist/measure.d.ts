@@ -1,3 +1,3 @@
-import { Size, TextBlockSizes } from './types';
-export declare const measureText: (text: string, fontStyle: string) => Size;
-export declare const measureLines: (lines: string[], fontStyle: string) => TextBlockSizes;
+import { TextBlockMetrics, Font, Rect } from './types';
+export declare const measureWidth: (text: string, font: Font) => Rect;
+export declare const measureLines: (lines: string[], font: Font, measurer?: (text: string, font: Font) => Rect) => TextBlockMetrics;

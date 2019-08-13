@@ -1,7 +1,20 @@
-import { Size } from './types'
+import { Size, Font } from './types'
 
-export const getFontStyle = ( fontSize: string | number, fontName: string ) =>
-  `${ fontSize }px ${ fontName }`
+export const getFontStyle = ( font: Font ) => {
+  const {
+    family,
+    size,
+    lineHeight = 1,
+    style = 'normal',
+    variant = 'normal',
+    weight = 'normal',
+    stretch = 'normal',
+  } = font
+
+  return [
+     style, variant, weight, stretch, `${ size }px/${ lineHeight }`, family
+  ].join( ' ' )
+}
 
 export const isOversize = ( bounds: Size, size: Size ) =>
   size.width > bounds.width || size.height > bounds.height

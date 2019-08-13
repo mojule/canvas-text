@@ -11,45 +11,44 @@ export interface Size {
 export interface Rect extends Point, Size {}
 
 export interface Font {
-  name: string
+  family: string
   size: number
   color: string
+  lineHeight?: number
+  style?: string
+  variant?: string
+  weight?: string
+  stretch?: string
 }
 
-// export interface TextBlock {
-//   text: string
-//   bounds: Rect
-//   align: 'left' | 'center' | 'right'
-//   valign: 'top' | 'middle' | 'bottom'
-//   lineHeightScale: number
-//   font: Font
-//   flush?: boolean
-//   fit?: FitSettings
-// }
-
+export type Align = 'left' | 'center' | 'right'
+export type VAlign = 'top' | 'middle' | 'bottom'
+export type FitMode = 'down' | 'up' | 'fit'
 
 export interface TextBlock {
   text: string
-  align: 'left' | 'center' | 'right'
-  lineHeightScale: number
   font: Font,
+  align?: Align
   flush?: boolean
 }
 
-export interface TextBlockSizes {
-  lineSizes: Size[]
+export interface TextBlockMetrics {
+  lineRects: Rect[]
   size: Size
 }
 
-export interface FitSettings {
-  minSize: number
+export interface FitOptions {
+  minFontSize: number
+  maxFontSize: number
+  fitMode: FitMode
+  valign: VAlign
+  scaleStep: number
 }
 
 export interface FitResult {
   canvas: HTMLCanvasElement
+  fontSize: number
   lines: string[]
-  size: number
-  yOffset: number
   oversize?: boolean
 }
 
