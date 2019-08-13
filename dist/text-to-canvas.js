@@ -30,7 +30,7 @@ exports.textToCanvas = (textBlock) => {
         else if (align === 'right') {
             x = canvas.width - width + (x * 2);
         }
-        context.fillText(line, x, y);
+        context.fillText(line, x | 0, y | 0);
         y += height;
     });
     if (flush) {
@@ -38,7 +38,7 @@ exports.textToCanvas = (textBlock) => {
         const { x, y, width, height } = bounds_1.imageBounds(imageData);
         canvas.width = width;
         canvas.height = height;
-        context.putImageData(imageData, -x, -y);
+        context.putImageData(imageData, -x | 0, -y | 0);
     }
     return canvas;
 };

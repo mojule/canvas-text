@@ -1,18 +1,111 @@
 <!doctype html>
 <html>
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
-    <title>Draw Text Example</title>
-    <style>
-      canvas {
-        display: block;
-        background: rgba( 0, 0, 0, 0.1 );
-        margin-bottom: 1rem;
-      }
-    </style>
-  </head>
-  <body>
-    <script defer src="examples.js"></script>
-  </body>
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+  <title>Draw Text Example</title>
+  <style>
+    body {
+      font-family: sans-serif;
+    }
+
+    canvas {
+      display: block;
+      background: rgba(0, 0, 0, 0.1);
+      margin-bottom: 1rem;
+    }
+
+    label {
+      display: block;
+    }
+
+    label.noblock {
+      display: inline;
+    }
+
+    form h1 {
+      font-size: 1rem;
+      margin-bottom: 0.25rem;
+    }
+
+    fieldset {
+      display: inline-block;
+      vertical-align: top;
+      border: 1px solid #ccc;
+      margin-bottom: 1rem;
+    }
+
+    legend {
+      font-weight: bold;
+    }
+  </style>
+</head>
+
+<body>
+  <h1>canvas-text example</h1>
+  <form>
+    <fieldset>
+      <legend>Font</legend>
+
+      <label>
+        <h1>Text</h1>
+        <textarea name="text">The quick brown
+fox jumps over
+the lazy dog</textarea>
+      </label>
+
+      <label>
+        <h1>Initial Font Size</h1>
+        <input name="fontSize" type="number" value="72" min="8" max="200" step="1">
+      </label>
+
+      <label>
+        <h1>Color</h1>
+        <input name="color" type="color" value="#3399FF">
+      </label>
+
+      <h1>Align</h1>
+      <label class="noblock"><input name="align" type="radio" value="left">Left</label>
+      <label class="noblock"><input name="align" type="radio" value="center" checked>Center</label>
+      <label class="noblock"><input name="align" type="radio" value="right">Right</label>
+      <br>
+
+      <h1>Vertical Align</h1>
+      <label class="noblock"><input name="valign" type="radio" value="top">Top</label>
+      <label class="noblock"><input name="valign" type="radio" value="middle" checked>Middle</label>
+      <label class="noblock"><input name="valign" type="radio" value="bottom">Bottom</label>
+    </fieldset>
+    <fieldset>
+      <legend>Fit Settings</legend>
+
+      <h1>Fit Mode</h1>
+      <label class="noblock"><input name="fitMode" type="radio" value="down"> Scale down</label>
+      <label class="noblock"><input name="fitMode" type="radio" value="fit" checked> Scale to fit</label>
+      <br>
+
+      <br>
+      <label>
+        <input name="autoWrap" type="checkbox" checked>
+        <strong>Auto Wrap</strong>
+      </label>
+      <br>
+
+      <label>
+        <input name="flush" type="checkbox" checked>
+        <strong>Flush</strong>
+      </label>
+      <br>
+
+      <label>
+        <h1>Step (smaller is slower, more precise; larger, fast, imprecise)</h1>
+        <input name="step" type="range" value="0.1" min="0.01" max="0.25" step="0.01">
+      </label>
+    </fieldset>
+    <br>
+    <input type="submit" value="Render Text">
+  </form>
+  <script defer src="examples.js"></script>
+</body>
+
 </html>

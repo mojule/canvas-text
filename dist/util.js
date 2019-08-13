@@ -9,4 +9,18 @@ exports.getFontStyle = (font) => {
 exports.isOversize = (bounds, size) => size.width > bounds.width || size.height > bounds.height;
 exports.scaleSize = ({ width, height }, { width: scaleW, height: scaleH }) => ({ width: width * scaleW, height: height * scaleH });
 exports.getArea = ({ width, height }) => width * height;
+exports.applyFontSizeToTextBlock = (textBlock, fontSize) => {
+    const { font } = textBlock;
+    const newFont = exports.applyFontSize(font, fontSize);
+    const newTextBlock = Object.assign({}, textBlock, {
+        font: newFont
+    });
+    return newTextBlock;
+};
+exports.applyFontSize = (font, fontSize) => {
+    const newFont = Object.assign({}, font, {
+        size: fontSize | 0
+    });
+    return newFont;
+};
 //# sourceMappingURL=util.js.map

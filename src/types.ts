@@ -23,7 +23,7 @@ export interface Font {
 
 export type Align = 'left' | 'center' | 'right'
 export type VAlign = 'top' | 'middle' | 'bottom'
-export type FitMode = 'down' | 'up' | 'fit'
+export type FitMode = 'down' | 'fit'
 
 export interface TextBlock {
   text: string
@@ -43,6 +43,7 @@ export interface FitOptions {
   fitMode: FitMode
   valign: VAlign
   scaleStep: number
+  autoWrap: boolean
 }
 
 export interface FitResult {

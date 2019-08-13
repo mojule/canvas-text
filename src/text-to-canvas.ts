@@ -48,7 +48,7 @@ export const textToCanvas = (
       x = canvas.width - width + ( x * 2 )
     }
 
-    context.fillText( line, x, y )
+    context.fillText( line, x | 0, y | 0 )
 
     y += height
   } )
@@ -60,7 +60,7 @@ export const textToCanvas = (
     canvas.width = width
     canvas.height = height
 
-    context.putImageData( imageData, -x, -y )
+    context.putImageData( imageData, -x | 0, -y | 0 )
   }
 
   return canvas

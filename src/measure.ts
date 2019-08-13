@@ -15,7 +15,7 @@ export const measureWidth = (
   text: string, font: Font
 ) => {
   textEl.style.font = getFontStyle( font )
-  textEl.textContent = text.replace( /\s+/g, '\u00a0' )
+  textEl.textContent = text.replace( /\s/g, '\u00a0' )
 
   document.body.appendChild( svgEl )
 

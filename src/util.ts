@@ -1,4 +1,4 @@
-import { Size, Font } from './types'
+import { Size, Font, TextBlock } from './types'
 
 export const getFontStyle = ( font: Font ) => {
   const {
@@ -26,3 +26,31 @@ export const scaleSize = (
   ( { width: width * scaleW, height: height * scaleH } )
 
 export const getArea = ({ width, height }: Size ) => width * height
+
+export const applyFontSizeToTextBlock = (
+  textBlock: TextBlock, fontSize: number
+) => {
+  const { font } = textBlock
+  const newFont = applyFontSize( font, fontSize )
+  const newTextBlock = Object.assign(
+    {},
+    textBlock,
+    {
+      font: newFont
+    }
+  )
+
+  return newTextBlock as TextBlock
+}
+
+export const applyFontSize = ( font: Font, fontSize: number ) => {
+  const newFont = Object.assign(
+    {},
+    font,
+    {
+      size: fontSize | 0
+    }
+  )
+
+  return newFont as Font
+}

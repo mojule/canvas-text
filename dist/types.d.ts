@@ -20,7 +20,7 @@ export interface Font {
 }
 export declare type Align = 'left' | 'center' | 'right';
 export declare type VAlign = 'top' | 'middle' | 'bottom';
-export declare type FitMode = 'down' | 'up' | 'fit';
+export declare type FitMode = 'down' | 'fit';
 export interface TextBlock {
     text: string;
     font: Font;
@@ -37,6 +37,7 @@ export interface FitOptions {
     fitMode: FitMode;
     valign: VAlign;
     scaleStep: number;
+    autoWrap: boolean;
 }
 export interface FitResult {
     canvas: HTMLCanvasElement;

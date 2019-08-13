@@ -1,7 +1,7 @@
 import { wrap } from '@mojule/wrap-text'
 import { textToCanvas } from './text-to-canvas'
-import { TextBlock, Size, FitResult, FitOptions, VAlign, Align, Font } from './types'
-import { isOversize } from './util'
+import { TextBlock, Size, FitResult, FitOptions, VAlign, Align } from './types'
+import { isOversize, applyFontSizeToTextBlock } from './util'
 import { measureWidth } from './measure'
 
 export const fitText = (
@@ -9,95 +9,147 @@ export const fitText = (
   fitSize: Size,
   options: Partial<FitOptions> = {}
 ) => {
+  const { align = 'left' } = textBlock
+  const opts = normalizeOptions( options )
+  const { valign } = opts
+  const width = Math.max( fitSize.width, 1 )
+  const height = Math.max( fitSize.height, 1 )
+
+  const fitResult = scaler( textBlock, { width, height }, opts )
+
+  return applyAlignment( fitResult, width, height, align, valign )
+}
+
+const scaler = (
+  textBlock: TextBlock,
+  fitSize: Size,
+  options: FitOptions
+) => {
+  const { fitMode, minFontSize, maxFontSize, autoWrap } = options
+
+  textBlock = normalizeTextBlock( textBlock, minFontSize, maxFontSize )
+
+  const { font } = textBlock
+  let { size } = font
+
+  const fitResult = tryFit( textBlock, fitSize, autoWrap )
+  const { oversize } = fitResult
+
+  // want to scale down or fit and it's oversize
+  if( oversize ){
+    return downScaler( textBlock, fitSize, options, size )
+  }
+
+  // want to scale down and already fits
+  if( fitMode === 'down' ){
+    return fitResult
+  }
+
+  // want to scale up or fit and it's too small
+  return upScaler( fitResult, textBlock, fitSize, options, size )
+}
+
+const normalizeOptions = ( options: Partial<FitOptions> ) => {
   const {
     minFontSize = 8,
     maxFontSize = 1024,
     fitMode = 'down',
     valign = 'top',
-    scaleStep = 0.025
+    scaleStep = 0.025,
+    autoWrap: wrap = true
   } = options
-
-  const scaleDown = 1 - scaleStep
-  const scaleUp = 1 + scaleStep
 
   if( scaleStep <= 0 || scaleStep >= 1 ){
     throw Error( 'Expected scaleStep to be a non-zero number less than 1' )
   }
 
-  const { text, font, align = 'left' } = textBlock
-  const { size } = font
-  const width = Math.max( fitSize.width, 1 )
-  const height = Math.max( fitSize.height, 1 )
-
-  const downScaler = ( fontSize: number ) => {
-    const scaledFont = Object.assign(
-      {},
-      font,
-      {
-        size: fontSize
-      }
-    )
-
-    const scaledTextBlock = Object.assign(
-      {},
-      textBlock,
-      {
-        font: scaledFont
-      }
-    )
-
-    const measurer = ( text: string ) =>
-      measureWidth( text, scaledFont ).width
-
-    const lines = wrap( text, width, measurer )
-
-    const wrappedTextBlock = Object.assign(
-      {},
-      textBlock,
-      {
-        text: lines.join( '\n' ),
-        font: scaledFont
-      }
-    )
-
-    const canvas = textToCanvas( wrappedTextBlock )
-    const oversize = isOversize( fitSize, canvas )
-    const nextSize = fontSize * scaleDown
-
-    if ( oversize && nextSize >= minFontSize ) return downScaler( nextSize )
-
-    const result: FitResult = { canvas, oversize, fontSize, lines }
-
-    return result
+  const normalized: FitOptions = {
+    minFontSize, maxFontSize, fitMode, valign, scaleStep, autoWrap: wrap
   }
 
-  const fitResult = downScaler(
-    Math.max( size, minFontSize )
-  )
+  return normalized
+}
 
-  return applyAlignment( fitResult, width, height, align, valign )
+const normalizeTextBlock = (
+  textBlock: TextBlock, minFontSize: number, maxFontSize: number
+) => {
+  const { font } = textBlock
+  let { size } = font
+
+  if( size < minFontSize ) size = minFontSize
+  if( size > maxFontSize ) size = maxFontSize
+
+  return applyFontSizeToTextBlock( textBlock, size )
+}
+
+const downScaler = (
+  textBlock: TextBlock,
+  fitSize: Size,
+  options: FitOptions,
+  fontSize: number
+) => {
+  const { scaleStep, minFontSize, autoWrap } = options
+  const scaleDown = 1 - scaleStep
+  const scaledTextBlock = applyFontSizeToTextBlock( textBlock, fontSize )
+
+  const result = tryFit( scaledTextBlock, fitSize, autoWrap )
+
+  const { oversize } = result
+  const nextSize = fontSize * scaleDown
+
+  if ( oversize && nextSize >= minFontSize )
+    return downScaler( textBlock, fitSize, options, nextSize )
+
+  return result
+}
+
+const upScaler = (
+  currentResult: FitResult,
+  textBlock: TextBlock,
+  fitSize: Size,
+  options: FitOptions,
+  fontSize: number
+) => {
+  const { scaleStep, maxFontSize, autoWrap } = options
+  const scaleUp = 1 + scaleStep
+  const nextSize = fontSize * scaleUp
+
+  if( nextSize > maxFontSize ) return currentResult
+
+  const scaledTextBlock = applyFontSizeToTextBlock( textBlock, nextSize )
+  const nextFit = tryFit( scaledTextBlock, fitSize, autoWrap )
+
+  if( nextFit.oversize ){
+    return currentResult
+  }
+
+  return upScaler( nextFit, textBlock, fitSize, options, nextSize )
 }
 
 const tryFit = (
   textBlock: TextBlock,
-  fitSize: Size
+  fitSize: Size,
+  autoWrap: boolean
 ) => {
-  const { text, font } = textBlock
+  const { font } = textBlock
   const { width } = fitSize
   const { size: fontSize } = font
 
   const measurer = ( text: string ) =>
     measureWidth( text, font ).width
 
-  const lines = wrap( text, width, measurer )
+  const text = (
+    autoWrap ?
+    wrap( textBlock.text, width, measurer ).join( '\n' ) :
+    textBlock.text
+  )
+
+  const lines = text.split( '\n' )
 
   const wrappedTextBlock = Object.assign(
     {},
     textBlock,
-    {
-      text: lines.join( '\n' ),
-      font
-    }
+    { text, font }
   )
 
   const canvas = textToCanvas( wrappedTextBlock )
@@ -137,7 +189,7 @@ const applyAlignment = (
     y = height - sh
   }
 
-  context.drawImage( canvas, x, y )
+  context.drawImage( canvas, x | 0, y | 0 )
 
   const result: FitResult = { canvas: fittedCanvas, oversize, fontSize, lines }
 
