@@ -19,7 +19,7 @@ exports.applyFontSizeToTextBlock = (textBlock, fontSize) => {
 };
 exports.applyFontSize = (font, fontSize) => {
     const newFont = Object.assign({}, font, {
-        size: fontSize | 0
+        size: fontSize
     });
     return newFont;
 };

@@ -11,6 +11,7 @@ Draw text to HTML Canvas with wrapping, fitting etc
 
 ## Roadmap
 
-- kerning
+- fit to width or height only
+- text runs
 - use binary search for auto fitting instead of step size
 - rotation?

@@ -48,7 +48,7 @@ export const applyFontSize = ( font: Font, fontSize: number ) => {
     {},
     font,
     {
-      size: fontSize | 0
+      size: fontSize
     }
   )
 

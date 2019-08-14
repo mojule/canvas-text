@@ -11,9 +11,9 @@
     }
 
     canvas {
-      display: block;
+      display: inline-block;
       background: rgba(0, 0, 0, 0.1);
-      margin-bottom: 1rem;
+      margin-right: 1rem;
     }
 
     label {
@@ -22,6 +22,16 @@
 
     label.noblock {
       display: inline;
+    }
+
+    .canvas-container, .container {
+      display: inline-block;
+      vertical-align: top;
+    }
+
+    form {
+      display: inline-block;
+      vertical-align: top;
     }
 
     form h1 {
@@ -44,25 +54,16 @@
 
 <body>
   <h1>canvas-text example</h1>
+  <div class='canvas-container'></div>
   <form>
     <fieldset>
-      <legend>Font</legend>
+      <legend>Text Block</legend>
 
       <label>
         <h1>Text</h1>
-        <textarea name="text">The quick brown
+        <textarea name="text" cols="40" rows="12">The quick brown
 fox jumps over
 the lazy dog</textarea>
-      </label>
-
-      <label>
-        <h1>Initial Font Size</h1>
-        <input name="fontSize" type="number" value="72" min="8" max="300" step="1">
-      </label>
-
-      <label>
-        <h1>Color</h1>
-        <input name="color" type="color" value="#3399FF">
       </label>
 
       <h1>Align</h1>
@@ -71,17 +72,78 @@ the lazy dog</textarea>
       <label class="noblock"><input name="align" type="radio" value="right">Right</label>
       <br>
 
-      <h1>Vertical Align</h1>
-      <label class="noblock"><input name="valign" type="radio" value="top">Top</label>
-      <label class="noblock"><input name="valign" type="radio" value="middle" checked>Middle</label>
-      <label class="noblock"><input name="valign" type="radio" value="bottom">Bottom</label>
+      <br>
+      <label>
+        <input name="flush" type="checkbox" checked>
+        <strong>Flush</strong>
+      </label>
+    </fieldset>
+
+    <fieldset>
+      <legend>Font</legend>
+
+      <label>
+        <h1>Family</h1>
+        <input name="family" type="text" value="sans-serif">
+      </label>
+
+      <label>
+        <h1>Initial Font Size</h1>
+        <input name="fontSize" type="number" value="50" min="8" max="300" step="1">
+      </label>
+
+      <label>
+        <h1>Color</h1>
+        <input name="color" type="color" value="#3399FF">
+      </label>
+
+      <label>
+        <h1>Line Height</h1>
+        <input name="lineHeight" type="number" value="1.2" min="0.5" max="5" step="0.1">
+      </label>
+
+      <label>
+        <h1>Style</h1>
+        <input name="style" type="text" value="normal">
+      </label>
+
+      <label>
+        <h1>Variant</h1>
+        <input name="variant" type="text" value="normal">
+      </label>
+
+      <label>
+        <h1>Weight</h1>
+        <input name="weight" type="text" value="bold">
+      </label>
+
+      <label>
+        <h1>Stretch</h1>
+        <input name="stretch" type="text" value="normal">
+      </label>
     </fieldset>
     <fieldset>
       <legend>Fit Settings</legend>
 
+      <label>
+        <h1>Minimum Font Size</h1>
+        <input name="minFontSize" type="number" value="8" min="8" max="300" step="1">
+      </label>
+
+      <label>
+        <h1>Maximum Font Size</h1>
+        <input name="maxFontSize" type="number" value="300" min="8" max="300" step="1">
+      </label>
+
       <h1>Fit Mode</h1>
       <label class="noblock"><input name="fitMode" type="radio" value="down"> Scale down</label>
       <label class="noblock"><input name="fitMode" type="radio" value="fit" checked> Scale to fit</label>
+      <br>
+
+      <h1>Vertical Align</h1>
+      <label class="noblock"><input name="valign" type="radio" value="top">Top</label>
+      <label class="noblock"><input name="valign" type="radio" value="middle" checked>Middle</label>
+      <label class="noblock"><input name="valign" type="radio" value="bottom">Bottom</label>
       <br>
 
       <br>
@@ -89,17 +151,12 @@ the lazy dog</textarea>
         <input name="autoWrap" type="checkbox" checked>
         <strong>Auto Wrap</strong>
       </label>
-      <br>
 
       <label>
-        <input name="flush" type="checkbox" checked>
-        <strong>Flush</strong>
-      </label>
-      <br>
-
-      <label>
-        <h1>Step (smaller is slower, more precise; larger, fast, imprecise)</h1>
-        <input name="step" type="range" value="0.1" min="0.01" max="0.25" step="0.01">
+        <h1>Scale Step</h1>
+        <input name="step" type="range" value="0.01" min="0.01" max="0.25" step="0.01">
+        <br>
+        Smaller is slower, more precise; larger, fast, imprecise
       </label>
     </fieldset>
     <br>

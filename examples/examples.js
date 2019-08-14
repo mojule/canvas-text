@@ -93,6 +93,7 @@ const createOptions = (minFontSize, maxFontSize, fitMode, scaleStep, autoWrap) =
     return options;
 };
 const addFittedCanvas = (name, textBlock, options) => {
+    const canvasContainer = document.querySelector('.canvas-container');
     const container = document.createElement('div');
     container.classList.add('container');
     const header = document.createElement('h3');
@@ -118,7 +119,7 @@ const addFittedCanvas = (name, textBlock, options) => {
     container.appendChild(header);
     container.appendChild(dest);
     container.appendChild(resultText);
-    document.body.appendChild(container);
+    canvasContainer.appendChild(container);
 };
 const addExample = (example, textBlockOptions = {}, fitOptions = {}, fontOptions = {}) => {
     const { name, text, fontSize, fitMode, step, autoWrap } = example;
@@ -171,10 +172,8 @@ modeNames.forEach(modeName => {
         });
     });
 });
-//examples.forEach( addExample )
 const form = document.querySelector('form');
-form.addEventListener('submit', e => {
-    e.preventDefault();
+const updateFromForm = () => {
     const existingContainer = document.querySelector('.container');
     if (existingContainer) {
         existingContainer.remove();
@@ -182,14 +181,22 @@ form.addEventListener('submit', e => {
     const data = new FormData(form);
     const name = 'Custom settings';
     let text = data.get('text');
+    const align = data.get('align');
+    const flush = data.get('flush') === 'on';
+    const family = data.get('family');
     const fontSize = Number(data.get('fontSize'));
     const color = data.get('color');
-    const align = data.get('align');
-    const valign = data.get('valign');
+    const lineHeight = Number(data.get('lineHeight'));
+    const style = data.get('style');
+    const variant = data.get('variant');
+    const weight = data.get('weight');
+    const stretch = data.get('stretch');
+    const minFontSize = Number(data.get('minFontSize'));
+    const maxFontSize = Number(data.get('maxFontSize'));
     const fitMode = data.get('fitMode');
+    const valign = data.get('valign');
     const step = Number(data.get('step'));
     const autoWrap = data.get('autoWrap') === 'on';
-    const flush = data.get('flush') === 'on';
     if (autoWrap) {
         text = text.split('\n').join(' ');
     }
@@ -197,16 +204,21 @@ form.addEventListener('submit', e => {
         align, flush
     };
     const fontOptions = {
-        color
+        color, family, lineHeight, style, variant, weight, stretch
     };
     const fitOptions = {
-        valign
+        valign, minFontSize, maxFontSize
     };
     const example = {
         name, text, fontSize, fitMode, step, autoWrap
     };
     addExample(example, textBlockOptions, fitOptions, fontOptions);
+};
+form.addEventListener('submit', e => {
+    e.preventDefault();
+    updateFromForm();
 });
+updateFromForm();
 
 },{"../fit":3,"../util":6}],3:[function(require,module,exports){
 "use strict";
@@ -443,7 +455,7 @@ exports.applyFontSizeToTextBlock = (textBlock, fontSize) => {
 };
 exports.applyFontSize = (font, fontSize) => {
     const newFont = Object.assign({}, font, {
-        size: fontSize | 0
+        size: fontSize
     });
     return newFont;
 };

@@ -51,6 +51,7 @@ const createOptions = (
 const addFittedCanvas = (
   name: string, textBlock: TextBlock, options: FitOptions
 ) => {
+  const canvasContainer = document.querySelector( '.canvas-container' )!
   const container = document.createElement( 'div' )
 
   container.classList.add( 'container' )
@@ -91,7 +92,7 @@ const addFittedCanvas = (
   container.appendChild( dest )
   container.appendChild( resultText )
 
-  document.body.appendChild( container )
+  canvasContainer.appendChild( container )
 }
 
 interface Example {
@@ -186,33 +187,40 @@ modeNames.forEach( modeName => {
   } )
 } )
 
-//examples.forEach( addExample )
-
 const form = document.querySelector( 'form' )!
 
-form.addEventListener( 'submit', e => {
-  e.preventDefault()
-
+const updateFromForm = () => {
   const existingContainer = document.querySelector( '.container' )
 
-  if( existingContainer ){
+  if ( existingContainer ) {
     existingContainer.remove()
   }
 
   const data = new FormData( form )
 
   const name = 'Custom settings'
+
   let text = data.get( 'text' ) as string
-  const fontSize = Number( data.get( 'fontSize' ) )
-  const color = data.get( 'color' ) as string
   const align = data.get( 'align' ) as Align
-  const valign = data.get( 'valign' ) as VAlign
-  const fitMode = data.get( 'fitMode' ) as FitMode
-  const step = Number( data.get( 'step' ) )
-  const autoWrap = data.get( 'autoWrap' ) === 'on'
   const flush = data.get( 'flush' ) === 'on'
 
-  if( autoWrap ){
+  const family = data.get( 'family' ) as string
+  const fontSize = Number( data.get( 'fontSize' ) )
+  const color = data.get( 'color' ) as string
+  const lineHeight = Number( data.get( 'lineHeight' ) )
+  const style = data.get( 'style' ) as string
+  const variant = data.get( 'variant' ) as string
+  const weight = data.get( 'weight' ) as string
+  const stretch = data.get( 'stretch' ) as string
+
+  const minFontSize = Number( data.get( 'minFontSize' ) )
+  const maxFontSize = Number( data.get( 'maxFontSize' ) )
+  const fitMode = data.get( 'fitMode' ) as FitMode
+  const valign = data.get( 'valign' ) as VAlign
+  const step = Number( data.get( 'step' ) )
+  const autoWrap = data.get( 'autoWrap' ) === 'on'
+
+  if ( autoWrap ) {
     text = text.split( '\n' ).join( ' ' )
   }
 
@@ -221,11 +229,11 @@ form.addEventListener( 'submit', e => {
   }
 
   const fontOptions: Partial<Font> = {
-    color
+    color, family, lineHeight, style, variant, weight, stretch
   }
 
   const fitOptions: Partial<FitOptions> = {
-    valign
+    valign, minFontSize, maxFontSize
   }
 
   const example: Example = {
@@ -233,4 +241,12 @@ form.addEventListener( 'submit', e => {
   }
 
   addExample( example, textBlockOptions, fitOptions, fontOptions )
+}
+
+form.addEventListener( 'submit', e => {
+  e.preventDefault()
+
+  updateFromForm()
 } )
+
+updateFromForm()
